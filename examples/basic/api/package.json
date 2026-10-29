@@ -1,0 +1,6 @@
+{
+  "name": "zerops-alchemy-basic-api",
+  "private": true,
+  "type": "module",
+  "scripts": { "start": "node index.js" }
+}

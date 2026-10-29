@@ -1,0 +1,872 @@
+[
+  {
+    "name": "Alpine",
+    "versionName": "alpine@3.17",
+    "status": "DISABLED",
+    "category": "USER"
+  },
+  {
+    "name": "Alpine",
+    "versionName": "alpine@3.18",
+    "status": "DISABLED",
+    "category": "USER"
+  },
+  {
+    "name": "Alpine",
+    "versionName": "alpine@3.19",
+    "status": "DISABLED",
+    "category": "USER"
+  },
+  {
+    "name": "Alpine",
+    "versionName": "alpine@3.20",
+    "status": "DISABLED",
+    "category": "USER"
+  },
+  {
+    "name": "Alpine",
+    "versionName": "alpine@3.21",
+    "status": "ACTIVE",
+    "category": "USER"
+  },
+  {
+    "name": "Alpine",
+    "versionName": "alpine@3.22",
+    "status": "ACTIVE",
+    "category": "USER"
+  },
+  {
+    "name": "Alpine",
+    "versionName": "alpine@3.23",
+    "status": "ACTIVE",
+    "category": "USER"
+  },
+  {
+    "name": "Alpine",
+    "versionName": "alpine@3.24",
+    "status": "ACTIVE",
+    "category": "USER"
+  },
+  {
+    "name": "Bun",
+    "versionName": "alpine/bun@1.2.2",
+    "status": "DISABLED",
+    "category": "USER"
+  },
+  {
+    "name": "Bun",
+    "versionName": "alpine/bun@1.3",
+    "status": "ACTIVE",
+    "category": "USER"
+  },
+  {
+    "name": "Bun",
+    "versionName": "alpine/bun@1.4",
+    "status": "ACTIVE",
+    "category": "USER"
+  },
+  {
+    "name": "Bun",
+    "versionName": "alpine/bun@canary",
+    "status": "ACTIVE",
+    "category": "USER"
+  },
+  {
+    "name": "Bun",
+    "versionName": "alpine/bun@nightly",
+    "status": "ACTIVE",
+    "category": "USER"
+  },
+  {
+    "name": "Docker",
+    "versionName": "alpine/docker@26.1.5",
+    "status": "ACTIVE",
+    "category": "USER"
+  },
+  {
+    "name": ".NET",
+    "versionName": "alpine/dotnet@10",
+    "status": "ACTIVE",
+    "category": "USER"
+  },
+  {
+    "name": ".NET",
+    "versionName": "alpine/dotnet@6",
+    "status": "DISABLED",
+    "category": "USER"
+  },
+  {
+    "name": ".NET",
+    "versionName": "alpine/dotnet@7",
+    "status": "DISABLED",
+    "category": "USER"
+  },
+  {
+    "name": ".NET",
+    "versionName": "alpine/dotnet@8",
+    "status": "ACTIVE",
+    "category": "USER"
+  },
+  {
+    "name": ".NET",
+    "versionName": "alpine/dotnet@9",
+    "status": "ACTIVE",
+    "category": "USER"
+  },
+  {
+    "name": "Elixir",
+    "versionName": "alpine/elixir@1.16.3",
+    "status": "ACTIVE",
+    "category": "USER"
+  },
+  {
+    "name": "Gleam",
+    "versionName": "alpine/gleam@1.5.1",
+    "status": "ACTIVE",
+    "category": "USER"
+  },
+  {
+    "name": "Golang",
+    "versionName": "alpine/go@1.22",
+    "status": "ACTIVE",
+    "category": "USER"
+  },
+  {
+    "name": "Java",
+    "versionName": "alpine/java@17",
+    "status": "ACTIVE",
+    "category": "USER"
+  },
+  {
+    "name": "Java",
+    "versionName": "alpine/java@21",
+    "status": "ACTIVE",
+    "category": "USER"
+  },
+  {
+    "name": "Nginx static",
+    "versionName": "alpine/nginx@1.22",
+    "status": "ACTIVE",
+    "category": "USER"
+  },
+  {
+    "name": "Node.js",
+    "versionName": "alpine/nodejs@18",
+    "status": "DISABLED",
+    "category": "USER"
+  },
+  {
+    "name": "Node.js",
+    "versionName": "alpine/nodejs@20",
+    "status": "ACTIVE",
+    "category": "USER"
+  },
+  {
+    "name": "Node.js",
+    "versionName": "alpine/nodejs@22",
+    "status": "ACTIVE",
+    "category": "USER"
+  },
+  {
+    "name": "Node.js",
+    "versionName": "alpine/nodejs@24",
+    "status": "ACTIVE",
+    "category": "USER"
+  },
+  {
+    "name": "PHP+Apache",
+    "versionName": "alpine/php-apache@8.1",
+    "status": "ACTIVE",
+    "category": "USER"
+  },
+  {
+    "name": "PHP+Apache",
+    "versionName": "alpine/php-apache@8.3",
+    "status": "ACTIVE",
+    "category": "USER"
+  },
+  {
+    "name": "PHP+Apache",
+    "versionName": "alpine/php-apache@8.4",
+    "status": "ACTIVE",
+    "category": "USER"
+  },
+  {
+    "name": "PHP+Apache",
+    "versionName": "alpine/php-apache@8.5",
+    "status": "ACTIVE",
+    "category": "USER"
+  },
+  {
+    "name": "PHP+Nginx",
+    "versionName": "alpine/php-nginx@8.1",
+    "status": "DISABLED",
+    "category": "USER"
+  },
+  {
+    "name": "PHP+Nginx",
+    "versionName": "alpine/php-nginx@8.3",
+    "status": "ACTIVE",
+    "category": "USER"
+  },
+  {
+    "name": "PHP+Nginx",
+    "versionName": "alpine/php-nginx@8.4",
+    "status": "ACTIVE",
+    "category": "USER"
+  },
+  {
+    "name": "PHP+Nginx",
+    "versionName": "alpine/php-nginx@8.5",
+    "status": "ACTIVE",
+    "category": "USER"
+  },
+  {
+    "name": "Python",
+    "versionName": "alpine/python@3.11",
+    "status": "ACTIVE",
+    "category": "USER"
+  },
+  {
+    "name": "Python",
+    "versionName": "alpine/python@3.12",
+    "status": "ACTIVE",
+    "category": "USER"
+  },
+  {
+    "name": "Ruby",
+    "versionName": "alpine/ruby@3.2",
+    "status": "DISABLED",
+    "category": "USER"
+  },
+  {
+    "name": "Ruby",
+    "versionName": "alpine/ruby@3.3",
+    "status": "ACTIVE",
+    "category": "USER"
+  },
+  {
+    "name": "Ruby",
+    "versionName": "alpine/ruby@3.4",
+    "status": "ACTIVE",
+    "category": "USER"
+  },
+  {
+    "name": "Ruby",
+    "versionName": "alpine/ruby@4.0",
+    "status": "ACTIVE",
+    "category": "USER"
+  },
+  {
+    "name": "Rust",
+    "versionName": "alpine/rust@1.78",
+    "status": "DISABLED",
+    "category": "USER"
+  },
+  {
+    "name": "Rust",
+    "versionName": "alpine/rust@1.80",
+    "status": "DISABLED",
+    "category": "USER"
+  },
+  {
+    "name": "Rust",
+    "versionName": "alpine/rust@1.86",
+    "status": "DISABLED",
+    "category": "USER"
+  },
+  {
+    "name": "Rust",
+    "versionName": "alpine/rust@nightly",
+    "status": "ACTIVE",
+    "category": "USER"
+  },
+  {
+    "name": "Rust",
+    "versionName": "alpine/rust@stable",
+    "status": "ACTIVE",
+    "category": "USER"
+  },
+  {
+    "name": "Static",
+    "versionName": "alpine/static@1.0",
+    "status": "ACTIVE",
+    "category": "USER"
+  },
+  {
+    "name": "Zero",
+    "versionName": "alpine/zero@0.1",
+    "status": "ACTIVE",
+    "category": "USER"
+  },
+  {
+    "name": "Zero",
+    "versionName": "alpine/zero@nightly",
+    "status": "ACTIVE",
+    "category": "USER"
+  },
+  {
+    "name": "ClickHouse",
+    "versionName": "clickhouse:ha@25.3",
+    "status": "ACTIVE",
+    "category": "STANDARD"
+  },
+  {
+    "name": "ClickHouse",
+    "versionName": "clickhouse:single@25.3",
+    "status": "ACTIVE",
+    "category": "STANDARD"
+  },
+  {
+    "name": "Elasticsearch",
+    "versionName": "elasticsearch:ha@8.16",
+    "status": "ACTIVE",
+    "category": "STANDARD"
+  },
+  {
+    "name": "Elasticsearch",
+    "versionName": "elasticsearch:ha@9.2",
+    "status": "ACTIVE",
+    "category": "STANDARD"
+  },
+  {
+    "name": "Elasticsearch",
+    "versionName": "elasticsearch:single@8.16",
+    "status": "ACTIVE",
+    "category": "STANDARD"
+  },
+  {
+    "name": "Elasticsearch",
+    "versionName": "elasticsearch:single@9.2",
+    "status": "ACTIVE",
+    "category": "STANDARD"
+  },
+  {
+    "name": "Kafka",
+    "versionName": "kafka:ha@3.8",
+    "status": "DISABLED",
+    "category": "STANDARD"
+  },
+  {
+    "name": "Kafka",
+    "versionName": "kafka:ha@3.9",
+    "status": "ACTIVE",
+    "category": "STANDARD"
+  },
+  {
+    "name": "Kafka",
+    "versionName": "kafka:single@3.8",
+    "status": "DISABLED",
+    "category": "STANDARD"
+  },
+  {
+    "name": "Kafka",
+    "versionName": "kafka:single@3.9",
+    "status": "ACTIVE",
+    "category": "STANDARD"
+  },
+  {
+    "name": "Local Storage",
+    "versionName": "local-storage:single@1",
+    "status": "ACTIVE",
+    "category": "LOCAL_STORAGE"
+  },
+  {
+    "name": "MariaDB",
+    "versionName": "mariadb:ha@10.6",
+    "status": "ACTIVE",
+    "category": "STANDARD"
+  },
+  {
+    "name": "MariaDB",
+    "versionName": "mariadb:single@10.6",
+    "status": "ACTIVE",
+    "category": "STANDARD"
+  },
+  {
+    "name": "Meilisearch",
+    "versionName": "meilisearch:single@1.10",
+    "status": "ACTIVE",
+    "category": "STANDARD"
+  },
+  {
+    "name": "Meilisearch",
+    "versionName": "meilisearch:single@1.20",
+    "status": "ACTIVE",
+    "category": "STANDARD"
+  },
+  {
+    "name": "Meilisearch",
+    "versionName": "meilisearch:single@1.44",
+    "status": "ACTIVE",
+    "category": "STANDARD"
+  },
+  {
+    "name": "Mysql",
+    "versionName": "mysql:ha@5.7",
+    "status": "DISABLED",
+    "category": "STANDARD"
+  },
+  {
+    "name": "NATS",
+    "versionName": "nats:ha@2.10",
+    "status": "ACTIVE",
+    "category": "STANDARD"
+  },
+  {
+    "name": "NATS",
+    "versionName": "nats:ha@2.12",
+    "status": "ACTIVE",
+    "category": "STANDARD"
+  },
+  {
+    "name": "NATS",
+    "versionName": "nats:single@2.10",
+    "status": "ACTIVE",
+    "category": "STANDARD"
+  },
+  {
+    "name": "NATS",
+    "versionName": "nats:single@2.12",
+    "status": "ACTIVE",
+    "category": "STANDARD"
+  },
+  {
+    "name": "Object storage",
+    "versionName": "object-storage",
+    "status": "ACTIVE",
+    "category": "OBJECT_STORAGE"
+  },
+  {
+    "name": "PostgreSQL",
+    "versionName": "postgresql:ha@14",
+    "status": "ACTIVE",
+    "category": "STANDARD"
+  },
+  {
+    "name": "PostgreSQL",
+    "versionName": "postgresql:ha@16",
+    "status": "ACTIVE",
+    "category": "STANDARD"
+  },
+  {
+    "name": "PostgreSQL",
+    "versionName": "postgresql:ha@17",
+    "status": "ACTIVE",
+    "category": "STANDARD"
+  },
+  {
+    "name": "PostgreSQL",
+    "versionName": "postgresql:ha@18",
+    "status": "ACTIVE",
+    "category": "STANDARD"
+  },
+  {
+    "name": "PostgreSQL",
+    "versionName": "postgresql:single@14",
+    "status": "ACTIVE",
+    "category": "STANDARD"
+  },
+  {
+    "name": "PostgreSQL",
+    "versionName": "postgresql:single@16",
+    "status": "ACTIVE",
+    "category": "STANDARD"
+  },
+  {
+    "name": "PostgreSQL",
+    "versionName": "postgresql:single@17",
+    "status": "ACTIVE",
+    "category": "STANDARD"
+  },
+  {
+    "name": "PostgreSQL",
+    "versionName": "postgresql:single@18",
+    "status": "ACTIVE",
+    "category": "STANDARD"
+  },
+  {
+    "name": "Qdrant",
+    "versionName": "qdrant:ha@1.10",
+    "status": "ACTIVE",
+    "category": "STANDARD"
+  },
+  {
+    "name": "Qdrant",
+    "versionName": "qdrant:ha@1.12",
+    "status": "ACTIVE",
+    "category": "STANDARD"
+  },
+  {
+    "name": "Qdrant",
+    "versionName": "qdrant:single@1.10",
+    "status": "ACTIVE",
+    "category": "STANDARD"
+  },
+  {
+    "name": "Qdrant",
+    "versionName": "qdrant:single@1.12",
+    "status": "ACTIVE",
+    "category": "STANDARD"
+  },
+  {
+    "name": "SeaweedFS",
+    "versionName": "seaweedfs:ha@3.85",
+    "status": "ACTIVE",
+    "category": "STANDARD"
+  },
+  {
+    "name": "SeaweedFS",
+    "versionName": "seaweedfs:single@3.85",
+    "status": "ACTIVE",
+    "category": "STANDARD"
+  },
+  {
+    "name": "Swarm VM",
+    "versionName": "swarm-vm@1",
+    "status": "ACTIVE",
+    "category": "USER"
+  },
+  {
+    "name": "Swarm",
+    "versionName": "swarm@1",
+    "status": "ACTIVE",
+    "category": "USER"
+  },
+  {
+    "name": "Typesense",
+    "versionName": "typesense:ha@27.1",
+    "status": "ACTIVE",
+    "category": "STANDARD"
+  },
+  {
+    "name": "Typesense",
+    "versionName": "typesense:ha@30.2",
+    "status": "ACTIVE",
+    "category": "STANDARD"
+  },
+  {
+    "name": "Typesense",
+    "versionName": "typesense:single@27.1",
+    "status": "ACTIVE",
+    "category": "STANDARD"
+  },
+  {
+    "name": "Typesense",
+    "versionName": "typesense:single@30.2",
+    "status": "ACTIVE",
+    "category": "STANDARD"
+  },
+  {
+    "name": "Ubuntu",
+    "versionName": "ubuntu@22.04",
+    "status": "ACTIVE",
+    "category": "USER"
+  },
+  {
+    "name": "Ubuntu",
+    "versionName": "ubuntu@24.04",
+    "status": "ACTIVE",
+    "category": "USER"
+  },
+  {
+    "name": "Ubuntu",
+    "versionName": "ubuntu@26.04",
+    "status": "ACTIVE",
+    "category": "USER"
+  },
+  {
+    "name": "Bun",
+    "versionName": "ubuntu/bun@1.1.34",
+    "status": "DISABLED",
+    "category": "USER"
+  },
+  {
+    "name": "Bun",
+    "versionName": "ubuntu/bun@1.2.2",
+    "status": "DISABLED",
+    "category": "USER"
+  },
+  {
+    "name": "Bun",
+    "versionName": "ubuntu/bun@1.3",
+    "status": "ACTIVE",
+    "category": "USER"
+  },
+  {
+    "name": "Bun",
+    "versionName": "ubuntu/bun@1.4",
+    "status": "ACTIVE",
+    "category": "USER"
+  },
+  {
+    "name": "Bun",
+    "versionName": "ubuntu/bun@canary",
+    "status": "ACTIVE",
+    "category": "USER"
+  },
+  {
+    "name": "Bun",
+    "versionName": "ubuntu/bun@nightly",
+    "status": "ACTIVE",
+    "category": "USER"
+  },
+  {
+    "name": "Deno",
+    "versionName": "ubuntu/deno@1.45.5",
+    "status": "DISABLED",
+    "category": "USER"
+  },
+  {
+    "name": "Deno",
+    "versionName": "ubuntu/deno@2.0.0",
+    "status": "ACTIVE",
+    "category": "USER"
+  },
+  {
+    "name": ".NET",
+    "versionName": "ubuntu/dotnet@10",
+    "status": "ACTIVE",
+    "category": "USER"
+  },
+  {
+    "name": ".NET",
+    "versionName": "ubuntu/dotnet@6",
+    "status": "DISABLED",
+    "category": "USER"
+  },
+  {
+    "name": ".NET",
+    "versionName": "ubuntu/dotnet@7",
+    "status": "DISABLED",
+    "category": "USER"
+  },
+  {
+    "name": ".NET",
+    "versionName": "ubuntu/dotnet@8",
+    "status": "ACTIVE",
+    "category": "USER"
+  },
+  {
+    "name": ".NET",
+    "versionName": "ubuntu/dotnet@9",
+    "status": "ACTIVE",
+    "category": "USER"
+  },
+  {
+    "name": "Elixir",
+    "versionName": "ubuntu/elixir@1.16.2",
+    "status": "ACTIVE",
+    "category": "USER"
+  },
+  {
+    "name": "Gleam",
+    "versionName": "ubuntu/gleam@1.5.1",
+    "status": "ACTIVE",
+    "category": "USER"
+  },
+  {
+    "name": "Golang",
+    "versionName": "ubuntu/go@1.22",
+    "status": "ACTIVE",
+    "category": "USER"
+  },
+  {
+    "name": "Java",
+    "versionName": "ubuntu/java@17",
+    "status": "ACTIVE",
+    "category": "USER"
+  },
+  {
+    "name": "Java",
+    "versionName": "ubuntu/java@21",
+    "status": "ACTIVE",
+    "category": "USER"
+  },
+  {
+    "name": "Nginx static",
+    "versionName": "ubuntu/nginx@1.22",
+    "status": "ACTIVE",
+    "category": "USER"
+  },
+  {
+    "name": "Node.js",
+    "versionName": "ubuntu/nodejs@18",
+    "status": "DISABLED",
+    "category": "USER"
+  },
+  {
+    "name": "Node.js",
+    "versionName": "ubuntu/nodejs@20",
+    "status": "ACTIVE",
+    "category": "USER"
+  },
+  {
+    "name": "Node.js",
+    "versionName": "ubuntu/nodejs@22",
+    "status": "ACTIVE",
+    "category": "USER"
+  },
+  {
+    "name": "Node.js",
+    "versionName": "ubuntu/nodejs@24",
+    "status": "ACTIVE",
+    "category": "USER"
+  },
+  {
+    "name": "PHP+Apache",
+    "versionName": "ubuntu/php-apache@8.1",
+    "status": "ACTIVE",
+    "category": "USER"
+  },
+  {
+    "name": "PHP+Apache",
+    "versionName": "ubuntu/php-apache@8.3",
+    "status": "ACTIVE",
+    "category": "USER"
+  },
+  {
+    "name": "PHP+Apache",
+    "versionName": "ubuntu/php-apache@8.4",
+    "status": "ACTIVE",
+    "category": "USER"
+  },
+  {
+    "name": "PHP+Apache",
+    "versionName": "ubuntu/php-apache@8.5",
+    "status": "ACTIVE",
+    "category": "USER"
+  },
+  {
+    "name": "PHP+Nginx",
+    "versionName": "ubuntu/php-nginx@8.1",
+    "status": "DISABLED",
+    "category": "USER"
+  },
+  {
+    "name": "PHP+Nginx",
+    "versionName": "ubuntu/php-nginx@8.3",
+    "status": "ACTIVE",
+    "category": "USER"
+  },
+  {
+    "name": "PHP+Nginx",
+    "versionName": "ubuntu/php-nginx@8.4",
+    "status": "ACTIVE",
+    "category": "USER"
+  },
+  {
+    "name": "PHP+Nginx",
+    "versionName": "ubuntu/php-nginx@8.5",
+    "status": "ACTIVE",
+    "category": "USER"
+  },
+  {
+    "name": "Python",
+    "versionName": "ubuntu/python@3.11",
+    "status": "ACTIVE",
+    "category": "USER"
+  },
+  {
+    "name": "Python",
+    "versionName": "ubuntu/python@3.12",
+    "status": "ACTIVE",
+    "category": "USER"
+  },
+  {
+    "name": "Python",
+    "versionName": "ubuntu/python@3.14",
+    "status": "ACTIVE",
+    "category": "USER"
+  },
+  {
+    "name": "Ruby",
+    "versionName": "ubuntu/ruby@3.2",
+    "status": "DISABLED",
+    "category": "USER"
+  },
+  {
+    "name": "Ruby",
+    "versionName": "ubuntu/ruby@3.3",
+    "status": "ACTIVE",
+    "category": "USER"
+  },
+  {
+    "name": "Ruby",
+    "versionName": "ubuntu/ruby@3.4",
+    "status": "ACTIVE",
+    "category": "USER"
+  },
+  {
+    "name": "Ruby",
+    "versionName": "ubuntu/ruby@4.0",
+    "status": "ACTIVE",
+    "category": "USER"
+  },
+  {
+    "name": "Rust",
+    "versionName": "ubuntu/rust@1.78",
+    "status": "DISABLED",
+    "category": "USER"
+  },
+  {
+    "name": "Rust",
+    "versionName": "ubuntu/rust@1.80",
+    "status": "DISABLED",
+    "category": "USER"
+  },
+  {
+    "name": "Rust",
+    "versionName": "ubuntu/rust@1.86",
+    "status": "DISABLED",
+    "category": "USER"
+  },
+  {
+    "name": "Rust",
+    "versionName": "ubuntu/rust@nightly",
+    "status": "ACTIVE",
+    "category": "USER"
+  },
+  {
+    "name": "Rust",
+    "versionName": "ubuntu/rust@stable",
+    "status": "ACTIVE",
+    "category": "USER"
+  },
+  {
+    "name": "Static",
+    "versionName": "ubuntu/static@1.0",
+    "status": "ACTIVE",
+    "category": "USER"
+  },
+  {
+    "name": "Zero",
+    "versionName": "ubuntu/zero@0.1",
+    "status": "ACTIVE",
+    "category": "USER"
+  },
+  {
+    "name": "Zero",
+    "versionName": "ubuntu/zero@nightly",
+    "status": "ACTIVE",
+    "category": "USER"
+  },
+  {
+    "name": "Valkey",
+    "versionName": "valkey:ha@7.2",
+    "status": "ACTIVE",
+    "category": "STANDARD"
+  },
+  {
+    "name": "Valkey",
+    "versionName": "valkey:single@7.2",
+    "status": "ACTIVE",
+    "category": "STANDARD"
+  },
+  {
+    "name": "Zerops Control Plane",
+    "versionName": "zcp@1",
+    "status": "ACTIVE",
+    "category": "USER"
+  }
+]

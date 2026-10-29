@@ -1,0 +1,12 @@
+zerops:
+  - setup: api
+    build:
+      base: nodejs@22
+      deployFiles: ["index.js", "package.json"]
+    run:
+      base: nodejs@22
+      start: node index.js
+      ports:
+        - port: 3000
+          protocol: tcp
+          httpSupport: true

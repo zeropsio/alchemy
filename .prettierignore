@@ -1,0 +1,6 @@
+src/client/api.gen.ts
+spec/
+lib/
+.cache/
+node_modules/
+package-lock.json

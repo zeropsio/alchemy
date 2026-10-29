@@ -1,0 +1,94 @@
+{
+  "name": "@zerops/alchemy",
+  "version": "0.1.0",
+  "description": "Zerops projects, services, databases, storage and routing for Alchemy v2.",
+  "keywords": [
+    "alchemy",
+    "effect",
+    "infrastructure-as-code",
+    "zerops"
+  ],
+  "license": "Apache-2.0",
+  "author": "Zerops s.r.o.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zeropsio/alchemy.git"
+  },
+  "bugs": {
+    "url": "https://github.com/zeropsio/alchemy/issues"
+  },
+  "homepage": "https://github.com/zeropsio/alchemy#readme",
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "type": "module",
+  "sideEffects": false,
+  "files": [
+    "lib",
+    "src",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE",
+    "NOTICE"
+  ],
+  "exports": {
+    ".": {
+      "types": "./lib/index.d.ts",
+      "bun": "./src/index.ts",
+      "default": "./lib/index.js"
+    },
+    "./Contributions": {
+      "types": "./lib/Contributions.d.ts",
+      "bun": "./src/Contributions.ts",
+      "default": "./lib/Contributions.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "alchemy": {
+    "contributes": [
+      "@zerops/alchemy/Contributions"
+    ]
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "prepack": "npm run build",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "bun test test/unit",
+    "gen:types": "bun scripts/gen-types.ts",
+    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\" \"scripts/**/*.ts\" \"examples/**/*.ts\""
+  },
+  "dependencies": {
+    "ignore": "7.0.14",
+    "yaml": "2.9.1"
+  },
+  "peerDependencies": {
+    "@effect/platform-bun": "^4.0.5",
+    "@effect/platform-node": "^4.0.5",
+    "alchemy": "2.0.0-beta.84",
+    "effect": "^4.0.5"
+  },
+  "peerDependenciesMeta": {
+    "@effect/platform-bun": {
+      "optional": true
+    },
+    "@effect/platform-node": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@effect/platform-bun": "4.0.6",
+    "@effect/platform-node": "4.0.6",
+    "@types/bun": "1.4.4",
+    "@types/node": "24.19.2",
+    "alchemy": "2.0.0-beta.84",
+    "effect": "4.0.6",
+    "openapi-typescript": "7.13.0",
+    "prettier": "3.9.10",
+    "typescript": "5.9.3"
+  },
+  "engines": {
+    "bun": ">=1.3.0",
+    "node": ">=22"
+  }
+}
