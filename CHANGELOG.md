@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.2.0] - 2026-10-30
+
+### Added
+
+- Typed managed family helpers for ClickHouse, Elasticsearch, Kafka, Nats, Qdrant, Typesense, SeaweedFS shared storage, Meilisearch and LocalStorage, alongside Postgres, MariaDB and Valkey.
+- Observed per-family reference keys, with HA-only PostgreSQL and Valkey replica keys unlocked by `mode: "HA"`.
+- Protective ClickHouse RAM (0.375 GB) and Elasticsearch RAM (2 GB) floors with environment overrides.
+- Production-sourced catalogue generation with `managedCatalogue` metadata.
+
+### Changed
+
+- **Breaking (types):** PostgreSQL `connectionStringReplicas` is accepted by `Zerops.ref` only for targets declared with `mode: "HA"` (the key does not exist on single services). PostgreSQL and Valkey gain their other observed keys.
+- `ZEROPS_POSTGRESQL_MIN_DISK_GB` now replaces the 2 GB floor (minimum 1 GB, the catalogue minimum) instead of only raising it.
+- Family floors and single-only mode checks also apply to the untyped `ManagedService({ type })` escape hatch.
+- Unset scaling minima default to the family floor; explicit minima or maxima below it are rejected before any API call.
+- The service catalogue (`KnownServiceType`) is generated from the production catalogue.
+
 ## [0.1.0] - 2026-10-29
 
 - Add Alchemy v2 Effect resources for projects, runtime services, managed services (PostgreSQL, MariaDB and Valkey), object storage, project/service variables, and HTTP/IPv6 port routing.

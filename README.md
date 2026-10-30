@@ -1,8 +1,8 @@
 # @zerops/alchemy
 
-Zerops projects, applications, managed databases, environment variables, object storage, and routing as [Alchemy v2](https://alchemy.run/) Effect resources.
+Zerops projects, applications, managed services, environment variables, object storage, and routing as [Alchemy v2](https://alchemy.run/) Effect resources.
 
-**Status:** 0.1.0. Alchemy v2 is beta; this provider requires exactly **`alchemy@2.0.0-beta.84`** and Effect 4. It does not support the legacy async/v0 provider API.
+**Status:** 0.2.0. Alchemy v2 is beta; this provider requires exactly **`alchemy@2.0.0-beta.84`** and Effect 4. It does not support the legacy async/v0 provider API.
 
 ## Install
 
@@ -88,9 +88,7 @@ Configure your domain's DNS separately. Route sync does not wait for certificate
 | `Project` | Project boundary, settings and ownership marker. |
 | `Service` | Runtime service with integrated source deployment and optional generated subdomain. |
 | `ManagedService` | Code-free managed service stack. |
-| `Postgres` | Managed PostgreSQL family helper. |
-| `MariaDB` | Managed MariaDB family helper. |
-| `Valkey` | Managed Valkey family helper. |
+| `Postgres`, `MariaDB`, `Valkey`, and more | [Managed family helpers](#managed-families). |
 | `ObjectStorage` | Object storage with quota and access policy. |
 | `ProjectVariable` | One editable project USER environment row. |
 | `ServiceVariable` | One editable service USER environment row. |
@@ -99,6 +97,50 @@ Configure your domain's DNS separately. Route sync does not wait for certificate
 | `Zerops.ref` | Server-resolved environment reference, not a remote lookup or resource. |
 
 Use `Zerops.providers()` to install the shared providers. Props, attributes, errors, timeouts, autoscaling and typed YAML interfaces are exported from [src/index.ts](src/index.ts).
+
+## Managed families
+
+Helpers take `project`, optional `hostname`, required catalogue `version`, and the remaining `ManagedService` props. Default mode is `"NON_HA"` (single); `mode: "HA"` unlocks the marked HA-only ref keys. `Meilisearch` and `LocalStorage` are single-only. `SeaweedFS` is shared storage; deprecated Zerops `shared-storage` import aliases map to this family.
+
+| Helper | Catalogue family | Versions | Single/HA | Floor (+ env override) | Ref keys (common; **HA-only** marked) |
+|---|---|---|---|---|---|
+| `Postgres` | `postgresql` | 14, 16, 17, 18 | Both | Disk 2 GB (`ZEROPS_POSTGRESQL_MIN_DISK_GB`) | BACKUP_PERIOD ZEROPS_PROMETHEUS_PORT connectionString connectionTlsString dbName hostname password port portTls projectId serviceId superUser superUserPassword user; **HA-only: connectionStringReplicas portReplicas** |
+| `MariaDB` | `mariadb` | 10.6 | Both | Catalogue minimum | BACKUP_PERIOD ZEROPS_PROMETHEUS_PORT connectionString dbName hostname password port projectId serviceId user |
+| `Valkey` | `valkey` | 7.2 | Both | Catalogue minimum | BACKUP_PERIOD ZEROPS_PROMETHEUS_PORT connectionString connectionTlsString hostname password port portTls projectId serviceId; **HA-only: connectionStringReplicas connectionTlsStringReplicas portReplicas portTlsReplicas** |
+| `ClickHouse` | `clickhouse` | 25.3 | Both | RAM 0.375 GB (`ZEROPS_CLICKHOUSE_MIN_RAM_GB`) | BACKUP_PERIOD ZEROPS_PROMETHEUS_PORT clusterName connectionString dbName hostname password port portHttp portMysql portNative portPostgresql projectId serviceId superUser superUserPassword user zeropsSubdomain |
+| `Elasticsearch` | `elasticsearch` | 8.16, 9.2 | Both | RAM 2 GB (`ZEROPS_ELASTICSEARCH_MIN_RAM_GB`) | connectionString hostname password port projectId serviceId user zeropsSubdomain |
+| `Kafka` | `kafka` | 3.9 | Both | Catalogue minimum | KAFKA_HEAP_OPTS hostname password port projectId serviceId user |
+| `Nats` | `nats` | 2.10, 2.12 | Both | Catalogue minimum | BACKUP_PERIOD JET_STREAM_ENABLED MAX_PAYLOAD connectionString hostname password port portManagement projectId serviceId user |
+| `Qdrant` | `qdrant` | 1.10, 1.12 | Both | Catalogue minimum | BACKUP_PERIOD apiKey automaticClusterReplication connectionString grpcConnectionString grpcPort hostname logLevel port projectId readOnlyApiKey serviceId |
+| `Typesense` | `typesense` | 27.1, 30.2 | Both | Catalogue minimum | apiKey connectionString hostname port projectId serviceId zeropsSubdomain |
+| `SeaweedFS` | `seaweedfs` | 3.85 | Both | Catalogue minimum | BACKUP_PERIOD hostname port projectId serviceId |
+| `Meilisearch` | `meilisearch` | 1.10, 1.20, 1.44 | Single | Catalogue minimum | BACKUP_PERIOD connectionString defaultAdminKey defaultChatKey defaultReadOnlyKey defaultSearchKey environment hostname masterKey port projectId serviceId zeropsSubdomain |
+| `LocalStorage` | `local-storage` | 1 | Single | Catalogue minimum | BACKUP_PERIOD hostname projectId serviceId |
+
+Within a stack:
+
+```ts
+const search = yield* Zerops.Typesense("Search", {
+  project, hostname: "search", version: "30.2",
+});
+const api = yield* Zerops.Service("Api", {
+  project, hostname: "api", type: "nodejs@22",
+  source: { dir: "./api" },
+  env: { SEARCH_API_KEY: Zerops.ref(search, "apiKey") },
+});
+```
+
+`ManagedService({ type })` remains the untyped escape hatch; family floors and mode availability still apply. An unset scaling minimum defaults to the family floor; explicit minimum or maximum bounds below it are rejected. Environment overrides replace floors, bounded below by catalogue minima: PostgreSQL disk 1 GB, ClickHouse RAM 0.25 GB, Elasticsearch RAM 0.75 GB. Lowering a protective floor may expose upstream provisioning failures.
+
+### Environment overrides
+
+| Variable | Default |
+|---|---|
+| `ZEROPS_ROUTING_FORCE_SYNC` | `false`; explicit consent to commit foreign staged routes. |
+| `ZEROPS_POSTGRESQL_MIN_DISK_GB` | 2 GB; catalogue minimum 1 GB. |
+| `ZEROPS_CLICKHOUSE_MIN_RAM_GB` | 0.375 GB; catalogue minimum 0.25 GB. |
+| `ZEROPS_ELASTICSEARCH_MIN_RAM_GB` | 2 GB; catalogue minimum 0.75 GB. |
+
 
 ## Deploy sources
 
@@ -124,7 +166,7 @@ Keep logical IDs, stack and stage stable for state-loss recovery. Matching proje
 - **Alchemy state includes resolved props in plaintext.** Redacted values protect display, not persisted-state encryption. Secure state storage and backups; user-supplied environment values and Git auth can enter state. Generated secrets read from Zerops are not exported in resource attributes; environment attributes use digests. Masked secret-content drift is unobservable.
 - Drift observations cover managed fields, not every remote attribute. Unowned extra environment keys are neither claimed nor removed; environment ownership checks are provider-scoped and best-effort.
 - Routing sync commits all staged edits for a project/kind. Foreign edits are refused unless `forceSync: true` or `ZEROPS_ROUTING_FORCE_SYNC=true` explicitly consents. **Use one routing writer per project/kind** across stacks, processes and GUI; in-process locks do not eliminate cross-process races.
-- Managed PostgreSQL has a minimum 2 GB disk floor. `ZEROPS_POSTGRESQL_MIN_DISK_GB` can raise, but not lower, it. Service availability depends on the endpoint catalogue.
+- Managed family floors protect against observed provisioning failures; lowering them through environment overrides is explicit opt-in. Service availability depends on the endpoint catalogue.
 - Source plans are advisory and interrupted app-version creates/builds are not exactly-once. Deployment deadlines do not cancel already-started remote work.
 - No CDN resource, certificate-issuance wait, dedicated IPv4/IPv4 port routing, API import flow, inline `main` deployment, typed runtime bindings, VPN, general lookup API, or Zerops state backend.
 - Project credit caps are write-only/last-sent; removing `maxCreditLimit` does not clear an existing cap.

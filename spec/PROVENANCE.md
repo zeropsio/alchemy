@@ -9,23 +9,27 @@ Unit-test error envelopes mirror observed API responses: nested `error.code`, to
 
 ## Service catalogue
 
-The snapshot was captured on 2026-10-27 using GET `/api/rest/public/settings`.
-`service-types.json` retains only service name, version name, version status and
-category: no credentials, organization identifiers, environment values or access
-details. It contains 145 versions across 36 families, including 118 ACTIVE version
-identifiers. `bun scripts/gen-service-types.ts` regenerates
-`src/client/serviceTypes.gen.ts` offline; `--fetch` explicitly replaces the sanitized
-snapshot using `ZEROPS_ENDPOINT` (default `https://api.app-prg1.zerops.io`) and
-`ZEROPS_TOKEN`.
+The production snapshot was captured on 2026-10-30 with a read-only
+GET `/api/rest/public/settings`. `service-types.json` retains only service name,
+version name, version status and category: no credentials, organization identifiers,
+environment values or access details. It contains **146 versions across 37 service
+names, including 115 ACTIVE version identifiers**.
+
+`bun scripts/gen-service-types.ts` regenerates `src/client/serviceTypes.gen.ts`
+offline, including `KnownServiceType` and `managedCatalogue` (ACTIVE family versions
+and availability modes). `--fetch` explicitly replaces the
+sanitized snapshot using `ZEROPS_ENDPOINT` (default `https://api.app-prg1.zerops.io`)
+and `ZEROPS_TOKEN`.
 
 ## Autoscaling update schema correction
 
 The published `RequestAutoscaling.customAutoscaling` references `BaseCustomAutoscaling`, whose properties are `verticalAutoscalingNullable` and `horizontalAutoscalingNullable`. Observed successful PUT bodies instead use `verticalAutoscaling` and `horizontalAutoscaling`, identical to the generated create DTO `InDtoBodyCustomAutoscaling`. The handwritten update operation substitutes that generated field type while preserving the remaining generated request fields; the committed specification is otherwise unchanged. Observed `{process:null}` responses are explicitly represented by the operation's return type.
 
-## MariaDB reference key evidence
+## Managed family reference key evidence
 
-A 2026-10-27 API observation of `mariadb:single@10.6` listed only keys from
-GET `/api/rest/public/service-stack/{id}/env`: `BACKUP_PERIOD`,
-`ZEROPS_PROMETHEUS_PORT`, `connectionString`, `dbName`, `hostname`, `password`,
-`port`, `projectId`, `serviceId`, `user`. These observed keys define
-`RefKey<"mariadb">`; no MariaDB environment values were printed or stored.
+The per-family common and HA-only reference keys are recorded in `src/ref.ts`;
+supported families and provisioning floors are documented in `README.md`.
+Key names were observed through GET `/api/rest/public/service-stack/{id}/env`,
+names only; no generated environment values were printed or stored. These observations
+define the family key table in `src/ref.ts`, rather than inheriting PostgreSQL keys
+for unrelated families.

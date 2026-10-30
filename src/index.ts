@@ -14,10 +14,30 @@ export {
   Postgres,
   MariaDB,
   Valkey,
+  ClickHouse,
+  Elasticsearch,
+  Kafka,
+  Nats,
+  Qdrant,
+  Typesense,
+  SeaweedFS,
+  Meilisearch,
+  LocalStorage,
+  type FamilyProps,
+  type CatalogueVersion,
   type PostgresProps,
   type MariaDBProps,
   type ValkeyProps,
-} from "./Databases.ts";
+  type ClickHouseProps,
+  type ElasticsearchProps,
+  type KafkaProps,
+  type NatsProps,
+  type QdrantProps,
+  type TypesenseProps,
+  type SeaweedFSProps,
+  type MeilisearchProps,
+  type LocalStorageProps,
+} from "./Families.ts";
 export { ref, type ZeropsRef, type RefTarget, type RefKey, type ManagedFamily } from "./ref.ts";
 export type { KnownServiceType } from "./client/serviceTypes.gen.ts";
 export {
@@ -53,7 +73,7 @@ export {
   type PortRouteAttributes,
 } from "./PortRoute.ts";
 export { Providers, providers, type ProviderOptions } from "./Providers.ts";
-export type { TimeoutOptions } from "./Config.ts";
+export type { TimeoutOptions, FamilyFloor, FamilyFloors } from "./Config.ts";
 export type {
   ZeropsRequestGuard,
   ZeropsRequestInfo,

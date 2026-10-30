@@ -9,10 +9,21 @@ import * as Redacted from "effect/Redacted";
 import type { Project } from "./Project.ts";
 import type { Providers } from "./Providers.ts";
 import type { ZeropsRef } from "./ref.ts";
-import { serviceTypesWithModes, type KnownServiceType } from "./client/serviceTypes.gen.ts";
+import {
+  managedCatalogue,
+  type CatalogueFamily,
+  type KnownServiceType,
+} from "./client/serviceTypes.gen.ts";
 import { ZeropsClient, type Http } from "./client/Http.ts";
 import { isNotFound, ZeropsValidation } from "./client/Errors.ts";
-import { ZeropsConfig, timeoutMs, type TimeoutOptions } from "./Config.ts";
+import {
+  ZeropsConfig,
+  timeoutMs,
+  defaultFamilyFloors,
+  floorEnv,
+  type FamilyFloors,
+  type TimeoutOptions,
+} from "./Config.ts";
 import {
   serviceStackOperations,
   type ServiceStackRecord,
@@ -41,7 +52,7 @@ export interface ManagedServiceProps {
   envIsolation?: string;
   /** SSH visibility policy, fixed at creation. */
   sshIsolation?: string;
-  /** Resource bounds; PostgreSQL always sends an explicit disk minimum. */
+  /** Resource bounds; known safety floors are made explicit. */
   autoscaling?: Autoscaling;
   /** Desired service status, default running. */
   state?: "running" | "stopped";
@@ -77,9 +88,13 @@ export function managedType(type: string, mode?: "NON_HA" | "HA"): string {
   if (qualified && mode && (qualified === "ha") !== (mode === "HA")) {
     throw new Error("Managed service type qualifier conflicts with mode " + mode);
   }
-  if (qualified) return normalized;
-  if (serviceTypesWithModes.has(normalized.split("@")[0])) {
-    return normalized.replace("@", mode === "HA" ? ":ha@" : ":single@");
+  const family = normalized.split(/[:@]/)[0]!;
+  if (Object.hasOwn(managedCatalogue, family)) {
+    const catalogue = managedCatalogue[family as CatalogueFamily];
+    const availability = qualified ?? (mode === "HA" ? "ha" : "single");
+    if (!catalogue[availability as "single" | "ha"])
+      throw new Error("Managed family " + family + " does not support " + availability + " mode");
+    if (!qualified) return normalized.replace("@", availability === "ha" ? ":ha@" : ":single@");
   }
   return normalized;
 }
@@ -118,27 +133,33 @@ export const getManagedService = (http: Http, id: string) =>
       ),
     );
 
-/** Normalize PostgreSQL disk bounds before either planning or mutation. */
-export function managedAutoscaling(
-  props: ManagedServiceProps,
-  configuredFloor: number,
-): Autoscaling {
-  if (!/^postgresql(?::(?:single|ha))?@/.test(canonicalServiceType(props.type))) {
-    return props.autoscaling ?? {};
+/** Normalize family safety bounds before either planning or mutation. */
+export function managedAutoscaling(props: ManagedServiceProps, floors: FamilyFloors): Autoscaling {
+  const family = canonicalServiceType(props.type).split(/[:@]/)[0]!;
+  // Config floors already carry env overrides (bounded below by the catalogue minimum).
+  const floor = floors[family] ?? defaultFamilyFloors[family];
+  if (!floor) return props.autoscaling ?? {};
+  const vertical = { ...props.autoscaling?.vertical };
+  for (const dimension of ["minDisk", "minRam"] as const) {
+    const minimum = floor[dimension];
+    if (minimum === undefined) continue;
+    const maximum = dimension === "minDisk" ? "maxDisk" : "maxRam";
+    for (const field of [dimension, maximum] as const) {
+      if (vertical[field] !== undefined && vertical[field] < minimum)
+        throw new Error(
+          family +
+            " autoscaling.vertical." +
+            field +
+            " must be at least " +
+            minimum +
+            " GB (" +
+            floorEnv(family, dimension) +
+            ")",
+        );
+    }
+    vertical[dimension] ??= minimum;
   }
-  const minimum = Math.max(2, configuredFloor);
-  const disk = props.autoscaling?.vertical?.minDisk;
-  if (disk !== undefined && disk < minimum) {
-    throw new Error(
-      "PostgreSQL autoscaling.vertical.minDisk must be at least " +
-        minimum +
-        " GB (ZEROPS_POSTGRESQL_MIN_DISK_GB; minimum safe disk is 2 GB)",
-    );
-  }
-  return {
-    ...props.autoscaling,
-    vertical: { ...props.autoscaling?.vertical, minDisk: disk ?? minimum },
-  };
+  return { ...props.autoscaling, vertical };
 }
 /** Only explicitly configured bounds are owned; API defaults are not desired fields. */
 export function managedScalingMatches(desired: unknown, observed: unknown): boolean {
@@ -173,12 +194,12 @@ export const observeManagedService = (
     const digests = yield* observeServiceEnv(http, service.id, previousDigests);
     return attributes(service, digests);
   });
-const validate = (props: ManagedServiceProps, floor: number) =>
+const validate = (props: ManagedServiceProps, floors: FamilyFloors) =>
   Effect.try({
     try: () => {
       if (props.hostname !== undefined) validateHostname(props.hostname);
       managedType(props.type, props.mode);
-      return autoscalingDto(managedAutoscaling(props, floor));
+      return autoscalingDto(managedAutoscaling(props, floors));
     },
     catch: (cause) =>
       new ZeropsValidation({
@@ -225,7 +246,7 @@ export const ManagedServiceProvider = () =>
         diff: ({ olds, news, output }) =>
           Effect.gen(function* () {
             if (!isResolved(news)) return undefined;
-            const scaling = yield* validate(news, config.postgresqlMinDiskGb);
+            const scaling = yield* validate(news, config.floors);
             // No recovered resource means Plan.ts resumes creation; checkpoint
             // props may not contain a complete immutable identity yet.
             if (!output) return undefined;
@@ -251,7 +272,7 @@ export const ManagedServiceProvider = () =>
           }),
         reconcile: ({ news, output, session }) =>
           Effect.gen(function* () {
-            const scaling = yield* validate(news, config.postgresqlMinDiskGb);
+            const scaling = yield* validate(news, config.floors);
             const identity = yield* ResourceContext;
             const options = {
               deadline:

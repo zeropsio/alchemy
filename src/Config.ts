@@ -16,18 +16,48 @@ export const timeoutMs = (kind: keyof typeof defaultTimeouts, options?: TimeoutO
   options?.[kind] === undefined
     ? defaultTimeouts[kind]
     : Duration.toMillis(Duration.fromInputUnsafe(options[kind]!));
+export type FamilyFloor = { minDisk?: number; minRam?: number };
+export type FamilyFloors = Partial<Record<string, FamilyFloor>>;
+/** Floors discovered above the catalogue minimum: the catalogue minimum failed, these sizes worked. */
+export const defaultFamilyFloors: FamilyFloors = {
+  postgresql: { minDisk: 2 },
+  clickhouse: { minRam: 0.375 },
+  elasticsearch: { minRam: 2 },
+};
+/** Catalogue minimums: the lowest value an env override may set a floor to. */
+const catalogueMinimums: FamilyFloors = {
+  postgresql: { minDisk: 1 },
+  clickhouse: { minRam: 0.25 },
+  elasticsearch: { minRam: 0.75 },
+};
+export const floorEnv = (family: string, dimension: keyof FamilyFloor) =>
+  "ZEROPS_" +
+  family.toUpperCase().replaceAll("-", "_") +
+  (dimension === "minDisk" ? "_MIN_DISK_GB" : "_MIN_RAM_GB");
 export interface ConfigValues {
   endpoint: string;
   organizationId?: string;
   routingForceSync: boolean;
-  postgresqlMinDiskGb: number;
+  floors: FamilyFloors;
 }
 export function readConfig(
   options: { endpoint?: string; organizationId?: string } = {},
 ): ConfigValues {
-  const minimum = Number(process.env.ZEROPS_POSTGRESQL_MIN_DISK_GB ?? 2);
-  if (!Number.isFinite(minimum) || minimum < 1)
-    throw new Error("ZEROPS_POSTGRESQL_MIN_DISK_GB must be finite and at least 1");
+  const floors: FamilyFloors = {};
+  for (const [family, defaults] of Object.entries(defaultFamilyFloors)) {
+    const floor: FamilyFloor = {};
+    for (const dimension of ["minDisk", "minRam"] as const) {
+      const safe = defaults?.[dimension];
+      if (safe === undefined) continue;
+      const variable = floorEnv(family, dimension);
+      const value = Number(process.env[variable] ?? safe);
+      const minimum = catalogueMinimums[family]![dimension]!;
+      if (!Number.isFinite(value) || value < minimum)
+        throw new Error(variable + " must be finite and at least " + minimum);
+      floor[dimension] = value;
+    }
+    floors[family] = floor;
+  }
   const organizationId = options.organizationId ?? process.env.ZEROPS_ORGANIZATION_ID;
   if (organizationId !== undefined && !organizationId.trim())
     throw new Error("Organization ID cannot be empty");
@@ -38,7 +68,7 @@ export function readConfig(
     endpoint: options.endpoint ?? process.env.ZEROPS_ENDPOINT ?? "https://api.app-prg1.zerops.io",
     organizationId,
     routingForceSync: force === "true",
-    postgresqlMinDiskGb: minimum,
+    floors,
   };
 }
 export class ZeropsConfig extends Context.Service<ZeropsConfig, ConfigValues>()("Zerops/Config") {}

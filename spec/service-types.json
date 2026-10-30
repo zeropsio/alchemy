@@ -1,53 +1,5 @@
 [
   {
-    "name": "Alpine",
-    "versionName": "alpine@3.17",
-    "status": "DISABLED",
-    "category": "USER"
-  },
-  {
-    "name": "Alpine",
-    "versionName": "alpine@3.18",
-    "status": "DISABLED",
-    "category": "USER"
-  },
-  {
-    "name": "Alpine",
-    "versionName": "alpine@3.19",
-    "status": "DISABLED",
-    "category": "USER"
-  },
-  {
-    "name": "Alpine",
-    "versionName": "alpine@3.20",
-    "status": "DISABLED",
-    "category": "USER"
-  },
-  {
-    "name": "Alpine",
-    "versionName": "alpine@3.21",
-    "status": "ACTIVE",
-    "category": "USER"
-  },
-  {
-    "name": "Alpine",
-    "versionName": "alpine@3.22",
-    "status": "ACTIVE",
-    "category": "USER"
-  },
-  {
-    "name": "Alpine",
-    "versionName": "alpine@3.23",
-    "status": "ACTIVE",
-    "category": "USER"
-  },
-  {
-    "name": "Alpine",
-    "versionName": "alpine@3.24",
-    "status": "ACTIVE",
-    "category": "USER"
-  },
-  {
     "name": "Bun",
     "versionName": "alpine/bun@1.2.2",
     "status": "DISABLED",
@@ -158,7 +110,7 @@
   {
     "name": "Node.js",
     "versionName": "alpine/nodejs@20",
-    "status": "ACTIVE",
+    "status": "DISABLED",
     "category": "USER"
   },
   {
@@ -176,7 +128,7 @@
   {
     "name": "PHP+Apache",
     "versionName": "alpine/php-apache@8.1",
-    "status": "ACTIVE",
+    "status": "DISABLED",
     "category": "USER"
   },
   {
@@ -302,6 +254,54 @@
   {
     "name": "Zero",
     "versionName": "alpine/zero@nightly",
+    "status": "ACTIVE",
+    "category": "USER"
+  },
+  {
+    "name": "Alpine",
+    "versionName": "alpine@3.17",
+    "status": "DISABLED",
+    "category": "USER"
+  },
+  {
+    "name": "Alpine",
+    "versionName": "alpine@3.18",
+    "status": "DISABLED",
+    "category": "USER"
+  },
+  {
+    "name": "Alpine",
+    "versionName": "alpine@3.19",
+    "status": "DISABLED",
+    "category": "USER"
+  },
+  {
+    "name": "Alpine",
+    "versionName": "alpine@3.20",
+    "status": "DISABLED",
+    "category": "USER"
+  },
+  {
+    "name": "Alpine",
+    "versionName": "alpine@3.21",
+    "status": "ACTIVE",
+    "category": "USER"
+  },
+  {
+    "name": "Alpine",
+    "versionName": "alpine@3.22",
+    "status": "ACTIVE",
+    "category": "USER"
+  },
+  {
+    "name": "Alpine",
+    "versionName": "alpine@3.23",
+    "status": "ACTIVE",
+    "category": "USER"
+  },
+  {
+    "name": "Alpine",
+    "versionName": "alpine@3.24",
     "status": "ACTIVE",
     "category": "USER"
   },
@@ -558,24 +558,6 @@
     "category": "STANDARD"
   },
   {
-    "name": "Ubuntu",
-    "versionName": "ubuntu@22.04",
-    "status": "ACTIVE",
-    "category": "USER"
-  },
-  {
-    "name": "Ubuntu",
-    "versionName": "ubuntu@24.04",
-    "status": "ACTIVE",
-    "category": "USER"
-  },
-  {
-    "name": "Ubuntu",
-    "versionName": "ubuntu@26.04",
-    "status": "ACTIVE",
-    "category": "USER"
-  },
-  {
     "name": "Bun",
     "versionName": "ubuntu/bun@1.1.34",
     "status": "DISABLED",
@@ -698,7 +680,7 @@
   {
     "name": "Node.js",
     "versionName": "ubuntu/nodejs@20",
-    "status": "ACTIVE",
+    "status": "DISABLED",
     "category": "USER"
   },
   {
@@ -716,7 +698,7 @@
   {
     "name": "PHP+Apache",
     "versionName": "ubuntu/php-apache@8.1",
-    "status": "ACTIVE",
+    "status": "DISABLED",
     "category": "USER"
   },
   {
@@ -840,6 +822,12 @@
     "category": "USER"
   },
   {
+    "name": "Box Workspace",
+    "versionName": "ubuntu/zbox@1",
+    "status": "ACTIVE",
+    "category": "STANDARD"
+  },
+  {
     "name": "Zero",
     "versionName": "ubuntu/zero@0.1",
     "status": "ACTIVE",
@@ -848,6 +836,24 @@
   {
     "name": "Zero",
     "versionName": "ubuntu/zero@nightly",
+    "status": "ACTIVE",
+    "category": "USER"
+  },
+  {
+    "name": "Ubuntu",
+    "versionName": "ubuntu@22.04",
+    "status": "ACTIVE",
+    "category": "USER"
+  },
+  {
+    "name": "Ubuntu",
+    "versionName": "ubuntu@24.04",
+    "status": "ACTIVE",
+    "category": "USER"
+  },
+  {
+    "name": "Ubuntu",
+    "versionName": "ubuntu@26.04",
     "status": "ACTIVE",
     "category": "USER"
   },

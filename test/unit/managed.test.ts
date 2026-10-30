@@ -6,8 +6,8 @@ import {
   managedType,
   type ManagedServiceProps,
 } from "../../src/ManagedService.ts";
-import { Postgres, MariaDB, Valkey } from "../../src/Databases.ts";
-import { readConfig } from "../../src/Config.ts";
+import { Postgres, MariaDB, Valkey } from "../../src/Families.ts";
+import { readConfig, defaultFamilyFloors } from "../../src/Config.ts";
 const props: ManagedServiceProps = { project: "p", type: "postgresql@16" };
 
 test("database factories share the one managed provider identity", () => {
@@ -25,20 +25,26 @@ test("managed families send explicit availability qualifiers", () => {
 });
 test("PostgreSQL disk minimum is explicit and respects the configured floor", () => {
   for (const type of ["postgresql@16", "postgresql:single@16", "postgresql:ha@16"]) {
-    expect(managedAutoscaling({ ...props, type }, 2).vertical?.minDisk).toBe(2);
-    expect(managedAutoscaling({ ...props, type }, 5).vertical?.minDisk).toBe(5);
+    expect(managedAutoscaling({ ...props, type }, defaultFamilyFloors).vertical?.minDisk).toBe(2);
+    expect(
+      managedAutoscaling({ ...props, type }, { postgresql: { minDisk: 5 } }).vertical?.minDisk,
+    ).toBe(5);
     expect(() =>
-      managedAutoscaling({ ...props, type, autoscaling: { vertical: { minDisk: 1 } } }, 2),
+      managedAutoscaling(
+        { ...props, type, autoscaling: { vertical: { minDisk: 1 } } },
+        defaultFamilyFloors,
+      ),
     ).toThrow("minDisk");
   }
-  expect(managedAutoscaling(props, 1).vertical?.minDisk).toBe(2);
-  expect(managedAutoscaling({ ...props, type: "valkey@7.2" }, 2)).toEqual({});
+  // An env override replaces the discovered floor, down to the catalogue minimum.
+  expect(managedAutoscaling(props, { postgresql: { minDisk: 1 } }).vertical?.minDisk).toBe(1);
+  expect(managedAutoscaling({ ...props, type: "valkey@7.2" }, defaultFamilyFloors)).toEqual({});
 });
 test("configured environment floor is applied", () => {
   const previous = process.env.ZEROPS_POSTGRESQL_MIN_DISK_GB;
   try {
     process.env.ZEROPS_POSTGRESQL_MIN_DISK_GB = "7";
-    expect(managedAutoscaling(props, readConfig().postgresqlMinDiskGb).vertical?.minDisk).toBe(7);
+    expect(managedAutoscaling(props, readConfig().floors).vertical?.minDisk).toBe(7);
   } finally {
     if (previous === undefined) delete process.env.ZEROPS_POSTGRESQL_MIN_DISK_GB;
     else process.env.ZEROPS_POSTGRESQL_MIN_DISK_GB = previous;
