@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+- Add an approval-gated, SHA-pinned production-small live workflow for project and PostgreSQL/service lifecycle tests plus basic E2E smoke.
+- Pin the production test organization through `ZEROPS_CI_ORGANIZATION_ID`, retain existing `alchtest-` ownership naming, and refuse shared IPv4 allocation.
+- Add explicit CI-org/prefix cleanup discovery through the ownership ledger and a final zero-leftovers assertion; keep generic mutation ownership checks unchanged.
+- Give production E2E PostgreSQL and Node services explicit minimum NON_HA resources and PostgreSQL disk of 2 GB.
+
 ## [0.2.0] - 2026-10-30
 
 ### Added

@@ -1,0 +1,104 @@
+name: Production live (small)
+
+on:
+  schedule:
+    - cron: '37 4 * * 1'
+  workflow_dispatch:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    outputs:
+      sha: ${{ steps.verify.outputs.sha }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify trusted repository, ref and main ancestry
+        id: verify
+        env:
+          REPOSITORY: ${{ github.repository }}
+          REF: ${{ github.ref }}
+          EVENT_SHA: ${{ github.sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ "$REPOSITORY" == 'zeropsio/alchemy' ]] || { echo 'Untrusted repository'; exit 1; }
+          case "$REF" in
+            refs/heads/main|refs/tags/v*) ;;
+            *) echo 'Live runs require main or a v* tag'; exit 1 ;;
+          esac
+          git fetch --no-tags origin '+refs/heads/main:refs/remotes/origin/main'
+          sha=$(git rev-parse HEAD)
+          [[ "$sha" == "$(git rev-parse "$EVENT_SHA^{commit}")" ]] || exit 1
+          git merge-base --is-ancestor "$sha" origin/main || { echo 'Commit is not on main'; exit 1; }
+          echo "sha=$sha" >> "$GITHUB_OUTPUT"
+
+  live:
+    needs: verify
+    runs-on: [self-hosted, Linux, X64, zerops-prod]
+    environment: prod-live
+    concurrency:
+      group: prod-live
+      cancel-in-progress: false
+    timeout-minutes: 420
+    env:
+      ZEROPS_TARGET: prod
+      ZEROPS_ENDPOINT: ${{ secrets.ZEROPS_ENDPOINT }}
+      ZEROPS_TOKEN: ${{ secrets.ZEROPS_TOKEN }}
+      ZEROPS_ORGANIZATION_ID: ${{ secrets.ZEROPS_ORGANIZATION_ID }}
+      ZEROPS_CI_ORGANIZATION_ID: ${{ secrets.ZEROPS_ORGANIZATION_ID }}
+      ALCHTEST_FAMILY: postgresql
+    steps:
+      - name: Require production environment secrets
+        shell: bash
+        run: |
+          set -euo pipefail
+          printf 'ZEROPS_PROD_LEDGER=%s/alchemy-prod-%s-%s.ledger\n' "$RUNNER_TEMP" "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" >> "$GITHUB_ENV"
+          printf 'ZEROPS_RUN_LOCK=%s/alchemy-prod.run.lock\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
+          for key in ZEROPS_ENDPOINT ZEROPS_TOKEN ZEROPS_ORGANIZATION_ID; do
+            [[ -n "${!key}" ]] || { echo "::error::prod-live environment secret $key is required"; exit 1; }
+          done
+          [[ "$ZEROPS_ENDPOINT" == 'https://api.app-prg1.zerops.io' ]] || { echo '::error::Production endpoint is not allowed'; exit 1; }
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ needs.verify.outputs.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+          cache: npm
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        with:
+          bun-version-file: .tool-versions
+      - name: Install locked dependencies
+        id: dependencies
+        run: npm ci
+      - name: Project and PostgreSQL service lifecycle only
+        timeout-minutes: 125
+        run: >-
+          bun test --timeout 3600000
+          --test-name-pattern '^(Project lifecycle, marker recovery, adoption and absence|one managed family: lifecycle, reference, convergence and absence)$'
+          ./test/live/project.test.ts ./test/live/family.test.ts
+      - name: Basic E2E smoke
+        timeout-minutes: 125
+        run: bun test/e2e/smoke.ts
+      - name: Sweep approved CI projects and assert no leftovers
+        if: always()
+        timeout-minutes: 115
+        env:
+          ZEROPS_CI_CLEANUP: '1'
+        shell: bash
+        run: |
+          set -euo pipefail
+          for key in ZEROPS_ENDPOINT ZEROPS_TOKEN ZEROPS_ORGANIZATION_ID; do
+            [[ -n "${!key}" ]] || { echo "::error::Cleanup requires prod-live environment secret $key"; exit 1; }
+          done
+          [[ '${{ steps.dependencies.outcome }}' == 'success' ]] || { echo '::error::Cleanup tooling was not installed; absence cannot be established'; exit 1; }
+          bun scripts/sweep.ts --all --prefix alchtest- --yes --assert-empty

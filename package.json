@@ -55,7 +55,9 @@
     "prepack": "npm run build",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "bun test test/unit",
+    "test:live": "bun test --timeout 3600000 test/live",
     "gen:types": "bun scripts/gen-types.ts",
+    "sweep": "bun scripts/sweep.ts",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\" \"scripts/**/*.ts\" \"examples/**/*.ts\""
   },
   "dependencies": {

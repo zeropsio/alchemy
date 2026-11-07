@@ -186,6 +186,74 @@ bun scripts/gen-service-types.ts # Offline catalogue regeneration
 
 Type generation uses committed production OpenAPI with documented normalization. Catalogue generation uses the sanitized committed snapshot; `bun scripts/gen-service-types.ts --fetch` replaces it using `ZEROPS_ENDPOINT` and `ZEROPS_TOKEN`. See [spec provenance](spec/PROVENANCE.md) and [changelog](CHANGELOG.md).
 
+Live and E2E harnesses run from this public checkout after `npm ci`; no private
+workspace files are required. They require **Linux with glibc (`libc.so.6`)** for
+Bun FFI file locks, Node ≥22, and the Bun version in `.tool-versions`.
+The committed npm dependencies include the Alchemy CLI and Effect/platform adapters.
+
+The public checkout includes only project lifecycle and the single-family live
+harness, plus the basic E2E smoke and their shared support. `npm run test:live`
+discovers that project/family test pair; set `ALCHTEST_FAMILY=postgresql` for the
+small production family lifecycle below. It does not run the E2E entry point;
+invoke `bun test/e2e/smoke.ts` separately.
+`npm run sweep -- ...` preserves the sweeper CLI (dry-run by default).
+For an authorized development target, explicitly provide `ZEROPS_TARGET=dev`,
+`ZEROPS_ENDPOINT` (HTTPS origin), `ZEROPS_TOKEN`, `ZEROPS_ORGANIZATION_ID`,
+`ZEROPS_DEV_DOMAIN` (the exact development DNS boundary), and an absolute
+`ZEROPS_DEV_LEDGER` path in an existing directory. Development API/upload/log
+hosts must equal that domain or be its subdomains; the production API is always
+refused in development mode. Ledgers must be user-owned regular mode 0600 files;
+the harness creates the file if absent. `ZEROPS_RUN_LOCK`, when supplied for
+development, must also be absolute. Environment values are operator-provided;
+there are no personal organization, development hostname, or ledger-path defaults.
+
+### Production live tests (small)
+
+`.github/workflows/live.yml` runs weekly, on manual dispatch, and on `v*` tags;
+never on pull requests. A secret-free GitHub-hosted job accepts only
+`zeropsio/alchemy` main or `v*` refs whose commit is an ancestor of `origin/main`.
+The approved `prod-live` environment releases credentials only to the verified
+SHA on `[self-hosted, Linux, X64, zerops-prod]`. Repository concurrency does not
+cancel running jobs; host job hooks serialize production work across repositories.
+
+The scope is deliberately not the managed/service matrix: project lifecycle and
+the single PostgreSQL family lifecycle, deployment, reference resolution, drift,
+scaling and teardown, followed by the basic E2E deploy/update/adoption/HTTP smoke.
+Each family/E2E stack has one PostgreSQL 16 `:single` service and one Node 22
+service. Projects are LIGHT; services are NON_HA with minimum shared resources,
+PostgreSQL disk is at least 2 GB, and no IPv4 is allocated. The family scaling
+check raises only the PostgreSQL RAM ceiling by 0.125 GB. Existing `alchtest-`
+project names and service names (`fam`, `app`, `db`, `api`) remain unchanged.
+
+Configure **environment secrets**, not runner files or repository defaults:
+`ZEROPS_ENDPOINT` (exactly `https://api.app-prg1.zerops.io`), `ZEROPS_TOKEN`,
+and `ZEROPS_ORGANIZATION_ID` for the dedicated CI organization. Missing secrets
+fail clearly before deployment. The workflow passes the organization as the
+`ZEROPS_CI_ORGANIZATION_ID` guard pin and provides absolute runner-temporary
+`ZEROPS_PROD_LEDGER` and `ZEROPS_RUN_LOCK` paths. Direct production invocations
+must set `ZEROPS_TARGET=prod` and provide these variables too; their parent
+directories must exist, and the ledger must be user-owned mode 0600.
+
+Exact selected commands (after `npm ci`, with the production environment set):
+
+```sh
+ALCHTEST_FAMILY=postgresql bun test --timeout 3600000 \
+  --test-name-pattern '^(Project lifecycle, marker recovery, adoption and absence|one managed family: lifecycle, reference, convergence and absence)$' \
+  ./test/live/project.test.ts ./test/live/family.test.ts
+bun test/e2e/smoke.ts
+ZEROPS_CI_CLEANUP=1 bun scripts/sweep.ts --all --prefix alchtest- --yes --assert-empty
+```
+
+The final workflow step uses `always()`, including after test failures. In explicit
+CI cleanup mode the sweeper inventories every project page in the pinned CI
+organization, selects **only `alchtest-` projects**, records their exact IDs and
+names in the existing ownership ledger, then uses the ordinary guarded project
+DELETE route. This also recovers leftovers from earlier runs without relaxing
+the generic mutation guard. Services are deleted with their project, never by
+hostname. A fresh inventory must show zero `alchtest-` projects or cleanup fails.
+Do not point CI cleanup at an organization shared with personal test projects.
+
+
 ## License
 
 Apache-2.0 © 2026 Zerops s.r.o. See [LICENSE](LICENSE) and [NOTICE](NOTICE).
