@@ -11,7 +11,7 @@ function object(value: unknown): Record<string, unknown> {
 
 function notFound(result: { status: number; body: Record<string, unknown> }): boolean {
   return (
-    result.status === 400 &&
+    (result.status === 400 || result.status === 404) &&
     result.body.error !== null &&
     typeof result.body.error === "object" &&
     "code" in result.body.error &&

@@ -75,7 +75,7 @@ export function apiError(status: number, body: unknown, operation: string) {
       ? ZeropsUnauthorized
       : code === "notAvailable" && status === 503
         ? ZeropsNotAvailable
-        : status === 400 && /NotFound$/.test(code)
+        : isAbsenceStatus(status) && /NotFound$/.test(code)
           ? ZeropsNotFound
           : status === 403 || code === "notInSudoMode"
             ? ZeropsForbidden
@@ -92,12 +92,14 @@ export function apiError(status: number, body: unknown, operation: string) {
   originalErrorBodies.set(error, body);
   return error;
 }
-// Entity absence is HTTP 400 plus the endpoint-specific code, never a route-level 404.
+// Zerops answers a missing entity with HTTP 400 or 404, depending on the backend version.
+const isAbsenceStatus = (status: unknown) => status === 400 || status === 404;
+// Entity absence is the endpoint-specific code, never a route-level 404 alone.
 export const isNotFound = (error: unknown, ...codes: string[]): boolean =>
   !!error &&
   typeof error === "object" &&
   "status" in error &&
-  error.status === 400 &&
+  isAbsenceStatus(error.status) &&
   "code" in error &&
   typeof error.code === "string" &&
   codes.includes(error.code);

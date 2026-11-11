@@ -5,7 +5,7 @@ SHA-256: `f0e4f507851562705db1b4c43de545046d0042e8b256f4d1c2153c03efd73770`.
 
 Run `npm run gen:types` to normalize the committed YAML and generate `src/client/api.gen.ts` using pinned openapi-typescript. No network is required. Normalization renames the project environment list operation to `ListProjectEnvs`, auth `getUserInfo` to `GetAuthUserInfo`, and regex `{path:.*}` parameters to `{path}`. This last rewrite is for generation only: it does not establish slash-preserving CDN encoding; no CDN operations are implemented. The API prefix remains in the specification; the transport accepts relative operation paths and appends it once. No server origin is embedded in generated types.
 
-Unit-test error envelopes mirror observed API responses: nested `error.code`, top-level `code`, HTTP 400 `projectNotFound`, HTTP 403 `processNotFound`, and HTTP 503 `notAvailable`. Server message text is intentionally never emitted as a diagnostic because it may contain secrets.
+Unit-test error envelopes mirror observed API responses: nested `error.code`, top-level `code`, HTTP 400 `projectNotFound`, HTTP 403 `processNotFound`, and HTTP 503 `notAvailable`. The HTTP 404 entity-code envelopes anticipate the backend moving its not-found codes from 400 to 404. Server message text is intentionally never emitted as a diagnostic because it may contain secrets.
 
 ## Service catalogue
 

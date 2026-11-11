@@ -85,12 +85,16 @@ export function createLiveApi() {
     (await request(...args)).body as T;
 }
 
-/** Absence is confirmed only by HTTP 400 and the endpoint's exact documented code. */
+/** Absence is confirmed only by HTTP 400 or 404 and the endpoint's exact documented code. */
 export async function liveAbsent(path: string, code: string): Promise<boolean> {
   acquireRunLock();
   const response = await createLiveRequest()("GET", path, undefined, { allowError: true });
   const body = response.body as { code?: string; error?: { code?: string } } | null;
-  if (response.status === 400 && (body?.code ?? body?.error?.code) === code) return true;
+  if (
+    (response.status === 400 || response.status === 404) &&
+    (body?.code ?? body?.error?.code) === code
+  )
+    return true;
   if (response.status < 200 || response.status >= 300)
     throw new Error(`LIVE_API_ERROR GET ${path} HTTP ${response.status}`);
   return false;
