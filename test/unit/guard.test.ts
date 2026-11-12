@@ -633,9 +633,9 @@ test("production refuses HA catalogue identifiers and default IPv4 route creatio
   );
 });
 
-test("sweeper waits deletion and requires exact projectNotFound verification", async () => {
+const sweepWithAbsence = async (absence: Response) => {
   const methods: string[] = [];
-  spyOn(globalThis, "fetch").mockImplementation(
+  const fetch = spyOn(globalThis, "fetch").mockImplementation(
     fetching(async (input, init) => {
       const path = new URL(String(input)).pathname.replace("/api/rest/public", "");
       methods.push(`${init?.method} ${path}`);
@@ -648,23 +648,40 @@ test("sweeper waits deletion and requires exact projectNotFound verification", a
       if (path === "/process/proc") return Response.json({ status: "FINISHED" });
       if (methods.filter((x) => x === "GET /project/p").length === 1)
         return Response.json({ clientId: ORG, name: "alchtest-delete" });
-      return Response.json({ error: { code: "projectNotFound" } }, { status: 400 });
+      return absence.clone();
     }),
   );
   const output = spyOn(console, "log").mockImplementation(() => {});
   try {
-    await sweep(["--yes", "--all"]);
-    expect(methods).toEqual([
+    const result = await sweep(["--yes", "--all"]).then(
+      () => undefined,
+      (error: unknown) => error,
+    );
+    return { methods, output: output.mock.calls, result };
+  } finally {
+    output.mockRestore();
+    fetch.mockRestore();
+  }
+};
+
+for (const status of [400, 404])
+  test(`sweeper waits deletion and requires exact projectNotFound verification at HTTP ${status}`, async () => {
+    const swept = await sweepWithAbsence(Response.json({ error: { code: "projectNotFound" } }, { status }));
+    expect(swept.result).toBeUndefined();
+    expect(swept.methods).toEqual([
       `GET /client/${ORG}/project`,
       "GET /project/p",
       "DELETE /project/p",
       "GET /process/proc",
       "GET /project/p",
     ]);
-    expect(output.mock.calls).toEqual([["p\talchtest-delete\tdelete\tprojectNotFound"]]);
-  } finally {
-    output.mockRestore();
-  }
+    expect(swept.output).toEqual([["p\talchtest-delete\tdelete\tprojectNotFound"]]);
+  });
+
+test("sweeper refuses a route-level 404 as project absence", async () => {
+  const swept = await sweepWithAbsence(Response.json({ error: { code: "notFound" } }, { status: 404 }));
+  expect(swept.result).toBeInstanceOf(Error);
+  expect(swept.output).toEqual([["p\talchtest-delete\tdelete\tFAILED: API request failed (HTTP 404)"]]);
 });
 
 test("sweeper production source filtering and age threshold fail closed", async () => {
@@ -1102,7 +1119,7 @@ describe("second-review production safety", () => {
     });
   }
 
-  test("live absence requires HTTP 400 and the exact code", async () => {
+  test("live absence requires HTTP 400 or 404 and the exact code", async () => {
     const fetch = mockLookup();
     let status = 400;
     let body: unknown = { error: { code: "projectNotFound" } };
@@ -1120,11 +1137,16 @@ describe("second-review production safety", () => {
       status = 200;
       expect(await liveAbsent("/project/p", code)).toBe(false);
       status = 404;
-      await expect(liveAbsent("/project/p", code)).rejects.toThrow("HTTP 404");
+      expect(await liveAbsent("/project/p", code)).toBe(true);
+      status = 403;
+      await expect(liveAbsent("/project/p", code)).rejects.toThrow("HTTP 403");
       status = 400;
     }
     body = { code: "other" };
     await expect(rawProjectAbsent("p")).rejects.toThrow("HTTP 400");
+    status = 404;
+    body = { code: "notFound" };
+    await expect(rawProjectAbsent("p")).rejects.toThrow("HTTP 404");
     status = 503;
     body = { code: "projectNotFound" };
     await expect(rawProjectAbsent("p")).rejects.toBeInstanceOf(LiveApi5xx);

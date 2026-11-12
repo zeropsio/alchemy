@@ -25,7 +25,7 @@ test("permission and duplicate classification", () => {
   expect(apiError(403, { code: "notInSudoMode" }, "GET")._tag).toBe("ZeropsForbidden");
   expect(apiError(400, { code: "userDataDuplicateKey" }, "POST")._tag).toBe("ZeropsConflict");
 });
-test("entity absence requires HTTP 400 and the caller's exact code", () => {
+test("entity absence requires HTTP 400 or 404 and the caller's exact code", () => {
   for (const code of [
     "projectNotFound",
     "serviceStackNotFound",
@@ -36,16 +36,22 @@ test("entity absence requires HTTP 400 and the caller's exact code", () => {
     "appVersionNotFound",
     "processNotFound",
   ]) {
-    expect(isNotFound(apiError(400, { error: { code } }, "GET"), code)).toBe(true);
-    for (const status of [401, 403, 404, 429, 500, 503]) {
+    for (const status of [400, 404]) {
+      const error = apiError(status, { error: { code } }, "GET");
+      expect(isNotFound(error, code)).toBe(true);
+      expect(error._tag).toBe("ZeropsNotFound");
+    }
+    for (const status of [401, 403, 429, 500, 503]) {
       const error = apiError(status, { error: { code } }, "GET");
       expect(isNotFound(error, code)).toBe(false);
       expect(error._tag).not.toBe("ZeropsNotFound");
     }
     expect(isNotFound({ code }, code)).toBe(false);
     expect(isNotFound({ status: "400", code }, code)).toBe(false);
+    expect(isNotFound({ status: "404", code }, code)).toBe(false);
   }
   expect(isNotFound(apiError(404, { code: "notFound" }, "GET"), "projectNotFound")).toBe(false);
+  expect(apiError(404, { code: "notFound" }, "GET")._tag).toBe("ZeropsApiError");
   expect(isNotFound(apiError(400, { code: "otherNotFound" }, "GET"), "projectNotFound")).toBe(
     false,
   );

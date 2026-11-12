@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Treat HTTP 404 with an entity's not-found code (for example `projectNotFound`) as a missing resource, like HTTP 400. Zerops is moving these answers from 400 to 404, and reads, deletes and the sweeper would otherwise fail.
 - Add an approval-gated, SHA-pinned production-small live workflow for project and PostgreSQL/service lifecycle tests plus basic E2E smoke.
 - Pin the production test organization through `ZEROPS_CI_ORGANIZATION_ID`, retain existing `alchtest-` ownership naming, and refuse shared IPv4 allocation.
 - Add explicit CI-org/prefix cleanup discovery through the ownership ledger and a final zero-leftovers assertion; keep generic mutation ownership checks unchanged.

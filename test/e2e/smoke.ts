@@ -186,7 +186,10 @@ async function absent(id: string) {
   });
   const body = (await response.json()) as { code?: string; error?: { code?: string } };
   await guard.after?.(request, { status: response.status, body });
-  if (response.status !== 400 || (body.code ?? body.error?.code) !== "projectNotFound")
+  if (
+    ![400, 404].includes(response.status) ||
+    (body.code ?? body.error?.code) !== "projectNotFound"
+  )
     throw new Error("Project absence not confirmed");
   await log("Raw guarded absence check: projectNotFound");
 }
